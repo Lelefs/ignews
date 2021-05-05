@@ -1,8 +1,8 @@
-import { GetServerSideProps } from "next"
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
-import { getSession } from "next-auth/client"
-import { RichText } from "prismic-dom";
-import { getPrismicClient } from "../../services/prismic";
+import { getSession } from 'next-auth/client';
+import { RichText } from 'prismic-dom';
+import { getPrismicClient } from '../../services/prismic';
 
 import styles from './post.module.scss';
 
@@ -30,12 +30,21 @@ export default function Post({ post }: PostProps) {
         </article>
       </main>
     </>
-  )
+  );
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, params }) => {
   const session = await getSession({ req });
   const { slug } = params;
+
+  if (!session.activeSubscription) {
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    };
+  }
 
   const prismic = getPrismicClient(req);
 
@@ -48,13 +57,13 @@ export const getServerSideProps: GetServerSideProps = async ({ req, params }) =>
     updatedAt: new Date(response.last_publication_date).toLocaleDateString('pt-BR', {
       day: '2-digit',
       month: 'long',
-      year: 'numeric'
-    })
-  }
+      year: 'numeric',
+    }),
+  };
 
   return {
     props: {
-      post
-    }
-  }
-}
+      post,
+    },
+  };
+};
