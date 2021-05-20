@@ -25,5 +25,5 @@ export function Header() {
         <SignInButton />
       </div>
     </header>
-  )
+  );
 }
